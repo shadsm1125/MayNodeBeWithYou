@@ -3,8 +3,6 @@ const bodyParser = require("body-parser");
 const app = express();
 const MongoClient = require("mongodb").MongoClient;
 
-app.use(bodyParser.urlencoded({ extended: true }));
-
 var connectionString =
   "mongodb+srv://yoda:starwars1234@cluster0.wghhp.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
 
@@ -13,10 +11,21 @@ MongoClient.connect(connectionString, { useUnifiedTopology: true })
     // ...
     const db = client.db("star-wars-quotes");
     const quotesCollection = db.collection("quotes");
-    // app.use(/* ... */);
+
+    app.set("view engine", "ejs");
+
+    app.use(bodyParser.urlencoded({ extended: true }));
+    app.use(bodyParser.json());
+    app.use(express.static("public"));
 
     app.get("/", (req, res) => {
-      res.sendFile(__dirname + "/index.html");
+      db.collection("quotes")
+        .find()
+        .toArray()
+        .then((quotes) => {
+          res.render("index.ejs", { quotes: quotes });
+        })
+        .catch(/* ... */);
     });
 
     app.post("/quotes", (req, res) => {
@@ -24,6 +33,37 @@ MongoClient.connect(connectionString, { useUnifiedTopology: true })
         .insertOne(req.body)
         .then((result) => {
           res.redirect("/");
+        })
+        .catch((error) => console.error(error));
+    });
+
+    app.put("/quotes", (req, res) => {
+      quotesCollection
+        .findOneAndUpdate(
+          { name: "Yoda" },
+          {
+            $set: {
+              name: req.body.name,
+              quote: req.body.quote,
+            },
+          },
+          {
+            upsert: true,
+          }
+        )
+        .then((result) => res.json("Success"))
+        .catch((error) => console.error(error));
+    });
+
+    app.delete("/quotes", (req, res) => {
+      console.log("delete route hit");
+      quotesCollection
+        .deleteOne(/* ... */)
+        .then((result) => {
+          if (result.deletedCount === 0) {
+            return res.json("No quote to delete");
+          }
+          res.json(`Deleted Darth Vadar's quote`);
         })
         .catch((error) => console.error(error));
     });
