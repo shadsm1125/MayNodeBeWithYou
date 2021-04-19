@@ -1,0 +1,22 @@
+{
+  "name": "maynodebewithyou",
+  "version": "1.0.0",
+  "description": "MongoDB. Node. Express",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shadsm1125/MayNodeBeWithYou.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/shadsm1125/MayNodeBeWithYou/issues"
+  },
+  "homepage": "https://github.com/shadsm1125/MayNodeBeWithYou#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
